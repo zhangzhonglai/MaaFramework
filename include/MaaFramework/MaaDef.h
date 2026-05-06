@@ -414,7 +414,6 @@ typedef uint64_t MaaWin32InputMethod;
 typedef uint64_t MaaMacOSScreencapMethod;
 #define MaaMacOSScreencapMethod_None 0ULL
 #define MaaMacOSScreencapMethod_ScreenCaptureKit 1ULL
-// TODO Core Graphics method?
 
 // MaaMacOSInputMethod:
 /**

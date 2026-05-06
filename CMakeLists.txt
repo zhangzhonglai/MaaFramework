@@ -4,6 +4,10 @@ project(MaaFw)
 
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
+if(APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "12.3")
+endif()
+
 include(source/MaaUtils/MaaUtils.cmake)
 
 option(WITH_ADB_CONTROLLER "build with adb controller" ON)

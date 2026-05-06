@@ -146,7 +146,7 @@ declare global {
          *
          * | Method          | Speed     | Compatibility | Require Permission | Background Support | Notes                            |
          * |-----------------|-----------|---------------|--------------------|--------------------|----------------------------------|
-         * | ScreenCaptureKit| Very Fast | High          | Screen Recording   | Yes                | Requires macOS 14.0+             |
+         * | ScreenCaptureKit| Very Fast | High          | Screen Recording   | Yes                | Requires macOS 12.3+             |
          */
         const MacOSScreencapMethod: Record<'ScreenCaptureKit', ScreencapOrInputMethods>
 

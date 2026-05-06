@@ -22,14 +22,7 @@ bool MacOSControlUnitMgr::connect()
 
     switch (screencap_method_) {
     case MaaMacOSScreencapMethod_ScreenCaptureKit:
-        // 检查macOS版本
-        if (__builtin_available(macOS 14.0, *)) {
-            screencap_ = std::make_shared<ScreenCaptureKitScreencap>(window_id_);
-        }
-        else {
-            LogError << "macOS 14.0 or later required for ScreenCaptureKit";
-            return false;
-        }
+        screencap_ = std::make_shared<ScreenCaptureKitScreencap>(window_id_);
         break;
     case MaaMacOSScreencapMethod_None:
         LogWarn << "No screencap method specified, screencap will not work";
