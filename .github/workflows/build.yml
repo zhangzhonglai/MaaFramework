@@ -110,7 +110,7 @@ jobs:
 
             - uses: pnpm/action-setup@v4
               with:
-                  version: latest
+                  version: 10
 
             - name: Use Node
               uses: actions/setup-node@v4
@@ -179,7 +179,7 @@ jobs:
 
             - uses: pnpm/action-setup@v4
               with:
-                  version: latest
+                  version: 10
 
             - name: Use Node
               uses: actions/setup-node@v4
@@ -298,7 +298,7 @@ jobs:
 
             - uses: pnpm/action-setup@v4
               with:
-                  version: latest
+                  version: 10
 
             - name: Use Node
               uses: actions/setup-node@v4
@@ -456,87 +456,6 @@ jobs:
                   name: MAA-android-${{ matrix.arch }}
                   path: "install"
 
-    nuget_pack:
-        needs: [meta, windows, ubuntu, macos, android]
-        runs-on: windows-latest
-        steps:
-            - uses: nuget/setup-nuget@v2
-
-            - uses: actions/checkout@v4
-            - uses: actions/download-artifact@v4
-              with:
-                  path: assets
-
-            - name: Nuget Pack
-              working-directory: tools/nupkgs
-              shell: bash
-              run: ./pack.sh ${{ needs.meta.outputs.version }}
-
-            - uses: actions/upload-artifact@v4
-              if: always()
-              with:
-                  name: pkgs-nuget
-                  path: "tools/nupkgs/*.nupkg"
-
-    pip_pack:
-        needs: [meta, windows, ubuntu, macos, android]
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/download-artifact@v4
-              with:
-                  path: assets
-
-            - name: Pip Pack
-              run: |
-                  tag=${{ needs.meta.outputs.tag }}
-                  pip install --upgrade -r tools/pip_pack/requirements.txt
-                  python tools/pip_pack/pip_pack.py $tag
-
-            - uses: actions/upload-artifact@v4
-              if: always()
-              with:
-                  name: pkgs-pip
-                  path: "pip_pack/wheel/*.whl"
-
-    nodejs_pack:
-        needs: [meta, windows, ubuntu, macos, android]
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/download-artifact@v4
-              with:
-                  path: assets
-
-            - uses: pnpm/action-setup@v4
-              with:
-                  version: latest
-
-            - name: Use Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-
-            - name: Build wrapper
-              run: |
-                  cd source/binding/NodeJS
-                  mkdir -p release/maa-node/dist
-                  cp src/apis/*.d.ts release/maa-node/dist
-                  cp release/maa-node/src/*.js release/maa-node/dist
-
-            - name: Package wrapper
-              run: |
-                  ASSETS=`pwd`/assets
-
-                  cd source/binding/NodeJS
-                  pnpm i
-                  npx tsx scripts/pack.ts $ASSETS ${{ needs.meta.outputs.tag }}
-
-            - uses: actions/upload-artifact@v4
-              with:
-                  name: pkgs-nodejs
-                  path: "source/binding/NodeJS/release"
-
     update_submodule:
         if: ${{ github.event_name == 'repository_dispatch' && github.event.action == 'MaaUtilsUpdated' }}
         needs:
@@ -546,9 +465,6 @@ jobs:
                 ubuntu,
                 macos,
                 android,
-                nuget_pack,
-                pip_pack,
-                nodejs_pack,
             ]
         runs-on: ubuntu-latest
         steps:
@@ -582,9 +498,6 @@ jobs:
                 ubuntu,
                 macos,
                 android,
-                nuget_pack,
-                pip_pack,
-                nodejs_pack,
             ]
         runs-on: ubuntu-latest
         steps:
@@ -594,4 +507,4 @@ jobs:
               run: |
                   gh workflow run --repo $GITHUB_REPOSITORY release.yml \
                     -f run-id="${{ github.run_id }}" \
-                    -f run-name="${{ needs.meta.outputs.tag }}" \
+                    -f run-name="${{ needs.meta.outputs.tag }}"
