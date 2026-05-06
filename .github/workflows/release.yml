@@ -89,7 +89,7 @@ jobs:
             - id: login
               uses: NuGet/login@v1
               with:
-                user: moomiji
+                user: ${{ secrets.NUGET_USER || 'moomiji' }}
                 token-service-url: ${{ env.NUGET_AUDIENCE }}/api/v2/token
                 audience: ${{ env.NUGET_AUDIENCE }}
 
@@ -235,11 +235,11 @@ jobs:
             ISSUE_BODY: |
                 A new release attempt for tag ${{ needs.meta.outputs.tag }} failed.
 
-                ${{ needs.nuget.outputs.result != 'success'         && '- nuget         @moomiji'   || '' }}
-                ${{ needs.nodejs.outputs.result != 'success'        && '- nodejs        @neko-para' || '' }}
-                ${{ needs.pip.outputs.result != 'success'           && '- pip           @MistEO'    || '' }}
-                ${{ needs.github.outputs.result != 'success'        && '- github        @MistEO'    || '' }}
-                ${{ needs.mirrorchyan.outputs.result != 'success'   && '- mirrorchyan   @MistEO'    || '' }}
+                ${{ needs.nuget.outputs.result != 'success'         && '- nuget         @${{ github.repository_owner }}'   || '' }}
+                ${{ needs.nodejs.outputs.result != 'success'        && '- nodejs        @${{ github.repository_owner }}' || '' }}
+                ${{ needs.pip.outputs.result != 'success'           && '- pip           @${{ github.repository_owner }}'    || '' }}
+                ${{ needs.github.outputs.result != 'success'        && '- github        @${{ github.repository_owner }}'    || '' }}
+                ${{ needs.mirrorchyan.outputs.result != 'success'   && '- mirrorchyan   @${{ github.repository_owner }}'    || '' }}
 
                 Release run: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
@@ -253,7 +253,7 @@ jobs:
                 | mirrorchyan | ${{ needs.mirrorchyan.outputs.result }} |
                 | github | ${{ needs.github.outputs.result }} |
 
-                cc @MistEO
+                cc @${{ github.repository_owner }}
         steps:
             - name: find issues
               id: find-issues
